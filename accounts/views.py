@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework import status
 from django.db import IntegrityError
+from .serializers import UserSerializer
 
 
 class LoginView(APIView):
@@ -36,9 +37,10 @@ class AccountsView(APIView):
         except IntegrityError:
             return Response({"user already exists"},status=status.HTTP_409_CONFLICT)
 
-        print(">>>>>>>>>>>", new_user)
+        serialized = UserSerializer(new_user)
+        print(">>>>>>>>>>>", serialized.data)
 
-        return Response("", status=status.HTTP_201_CREATED)
+        return Response(serialized.data, status=status.HTTP_201_CREATED)
 
 
 
