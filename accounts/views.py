@@ -38,10 +38,4 @@ class AccountsView(APIView):
             return Response({"user already exists"},status=status.HTTP_409_CONFLICT)
 
         serialized = UserSerializer(new_user)
-        print(">>>>>>>>>>>", serialized.data)
-
         return Response(serialized.data, status=status.HTTP_201_CREATED)
-
-
-
-
