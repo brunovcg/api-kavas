@@ -4,5 +4,5 @@ class SubmissionSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     grade = serializers.FloatField()
     repo = serializers.CharField()
-    user_id = serializers.IntegerField()
-    activity_id = serializers.IntegerField()
+    user = serializers.IntegerField()
+    activity = serializers.IntegerField()

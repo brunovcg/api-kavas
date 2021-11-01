@@ -38,7 +38,6 @@ class CourseView(APIView):
     def get(self, request):
 
         course = Course.objects.all()
-
         serialized = CourseSerializer(course, many=True)
 
         return Response(serialized.data, status=status.HTTP_200_OK)
@@ -120,9 +119,7 @@ class CourseRegistrationsView(APIView):
 
             except ObjectDoesNotExist:
                 return Response({"errors": "invalid user_id list"}, status=status.HTTP_404_NOT_FOUND)
-
-            
-
+          
         serialized = CourseSerializer(course)
 
         return Response(serialized.data, status=status.HTTP_200_OK)
