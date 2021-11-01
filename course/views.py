@@ -5,6 +5,8 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from kanvas.permissions import Instrutor
 from rest_framework.permissions import IsAuthenticated
+from course.models import Course
+from .serializers import CourseSerializer
 
 
 class CourseView(APIView):  
@@ -14,15 +16,29 @@ class CourseView(APIView):
 
     def post(self, request):
        
-
         CourseView.authentication_classes = [TokenAuthentication]
         CourseView.permission_classes = [Instrutor, IsAuthenticated]
+
+        name = request.data['name']
+
+        add_course = Course.objects.get_or_create(name=name)
+
+        if add_course[1] == True:
+
+            serialized = CourseSerializer(add_course[0])
+
+            return Response(serialized.data, status=status.HTTP_201_CREATED)
         
-        return Response({'msg': 'Criando Curso'}, status=status.HTTP_201_CREATED)
+        return Response({'error': 'Course with this name already exists'}, status=status.HTTP_400_BAD_REQUEST)
+        
 
     def get(self, request):
 
-        return Response({'msg': 'Obtendo toda a lista de alunos'}, status=status.HTTP_200_OK)
+        course = Course.objects.all()
+
+        serialized = CourseSerializer(course, many=True)
+
+        return Response(serialized.data, status=status.HTTP_200_OK)
 
 
 class OneCourseView(APIView):
