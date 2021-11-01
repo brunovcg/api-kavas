@@ -11,7 +11,7 @@ class OneSubmissionView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated, Instrutor, Facilitador]
 
-    def put(self, request):
+    def put(self, request, submission_id=''):
         
         return Response({'msg': 'Editando nota de submissão'}, status=status.HTTP_201_CREATED)
 

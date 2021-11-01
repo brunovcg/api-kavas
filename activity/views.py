@@ -21,11 +21,11 @@ class OneActivityView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated, Instrutor, Facilitador]
 
-    def put(self, request):
+    def put(self, request, activity_id=''):
         return Response({'msg': 'Atualizando Atividades'}, status=status.HTTP_200_OK)
 
 class ActivitySubmissionView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated, Estudante]
-    def post(self, request):
+    def post(self, request, activity_id=''):
         return Response({'msg': 'Fazendo uma submissão'}, status=status.HTTP_201_CREATED)

@@ -9,10 +9,14 @@ from rest_framework.permissions import IsAuthenticated
 
 class CourseView(APIView):  
 
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [Instrutor, IsAuthenticated]
+
     def post(self, request):
+       
 
         CourseView.authentication_classes = [TokenAuthentication]
-        CourseView.permission_classes = [IsAuthenticated, Instrutor]
+        CourseView.permission_classes = [Instrutor, IsAuthenticated]
         
         return Response({'msg': 'Criando Curso'}, status=status.HTTP_201_CREATED)
 
@@ -22,18 +26,18 @@ class CourseView(APIView):
 
 
 class OneCourseView(APIView):
-    def put(self, request):
+    def put(self, request, course_id=''):
         OneCourseView.authentication_classes = [TokenAuthentication]
         OneCourseView.permission_classes = [IsAuthenticated, Instrutor]
 
         return Response({'msg': 'Atualizando Curso Especifico'}, status=status.HTTP_200_OK)
 
-    def get(self,request):
+    def get(self,request,course_id=''):
 
 
         return Response({'msg': 'Filtrando um curso'}, status=status.HTTP_200_OK)
 
-    def delete(self, request):
+    def delete(self, request,course_id=''):
         OneCourseView.authentication_classes = [TokenAuthentication]
         OneCourseView.permission_classes = [IsAuthenticated, Instrutor]
 
@@ -44,7 +48,7 @@ class CourseRegistrationsView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated, Instrutor]
     
-    def put(self, request):
+    def put(self, request, course_id=''):
         return Response({'msg': 'Atualizando lista de alunos matriculados'}, status=status.HTTP_200_OK)
 
 
