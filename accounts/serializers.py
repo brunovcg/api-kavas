@@ -5,3 +5,7 @@ class UserSerializer(serializers.Serializer):
     username = serializers.CharField()
     is_superuser = serializers.BooleanField()
     is_staff = serializers.BooleanField()
+
+class UserShortSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    username = serializers.CharField()

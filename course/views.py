@@ -7,6 +7,9 @@ from kanvas.permissions import Instrutor
 from rest_framework.permissions import IsAuthenticated
 from course.models import Course
 from .serializers import CourseSerializer
+from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.models import User
+
 
 
 class CourseView(APIView):  
@@ -45,19 +48,44 @@ class OneCourseView(APIView):
     def put(self, request, course_id=''):
         OneCourseView.authentication_classes = [TokenAuthentication]
         OneCourseView.permission_classes = [IsAuthenticated, Instrutor]
+        data = request.data
 
-        return Response({'msg': 'Atualizando Curso Especifico'}, status=status.HTTP_200_OK)
+        try:
+            course = Course.objects.get(id=course_id)
+            course.name = data["name"]
+            course.save()
+        except ObjectDoesNotExist:
+            return Response({"error": "invalid course_id"}, status=status.HTTP_404_NOT_FOUND)
+
+
+        serialized = CourseSerializer(course)
+
+
+        return Response(serialized.data, status=status.HTTP_200_OK)
+
 
     def get(self,request,course_id=''):
 
+        try:
+            course = Course.objects.get(id=course_id)
+            serialized = CourseSerializer(course)
+        except ObjectDoesNotExist:
+            return Response({"error": "invalid course_id"}, status=status.HTTP_404_NOT_FOUND)
 
-        return Response({'msg': 'Filtrando um curso'}, status=status.HTTP_200_OK)
+        return Response(serialized.data, status=status.HTTP_200_OK)
 
     def delete(self, request,course_id=''):
         OneCourseView.authentication_classes = [TokenAuthentication]
         OneCourseView.permission_classes = [IsAuthenticated, Instrutor]
 
-        return Response({'msg': 'Deletando curso especifico'}, status=status.HTTP_204_NO_CONTENT)
+        try:
+            course = Course.objects.get(id=course_id)
+            course.delete()
+        except ObjectDoesNotExist:
+            return Response({"error": "invalid course_id"}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 
 class CourseRegistrationsView(APIView):
@@ -65,6 +93,38 @@ class CourseRegistrationsView(APIView):
     permission_classes = [IsAuthenticated, Instrutor]
     
     def put(self, request, course_id=''):
-        return Response({'msg': 'Atualizando lista de alunos matriculados'}, status=status.HTTP_200_OK)
+
+        users = request.data['user_ids']
+
+        if not type(users) == list:
+            return Response({"errors": "user_ids must be a list(array)"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            course = Course.objects.get(id=course_id)
+
+        except ObjectDoesNotExist:
+            return Response({"errors": "invalid course_id"}, status=status.HTTP_404_NOT_FOUND)
+
+        course.users.set([])
+        
+
+
+        for user_id in users:
+            try:
+                user = User.objects.get(id=user_id)
+
+                if user.is_staff or user.is_superuser:
+                    return Response({"errors": "Only students can be enrolled in the course."}, status=status.HTTP_404_NOT_FOUND)
+
+                course.users.add(user)
+
+            except ObjectDoesNotExist:
+                return Response({"errors": "invalid user_id list"}, status=status.HTTP_404_NOT_FOUND)
+
+            
+
+        serialized = CourseSerializer(course)
+
+        return Response(serialized.data, status=status.HTTP_200_OK)
 
 

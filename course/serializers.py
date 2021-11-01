@@ -1,10 +1,10 @@
 from rest_framework import serializers
-from accounts.serializers import UserSerializer
+from accounts.serializers import UserShortSerializer
 
 
 class CourseSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     name = serializers.CharField()
-    users = UserSerializer(many=True)
+    users = UserShortSerializer(many=True)
 
     
