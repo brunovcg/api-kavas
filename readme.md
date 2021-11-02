@@ -130,12 +130,12 @@ Permissão: Qualquer request, não necessita de token
 
 Esse token deve ser usado nas rotas que pedem autenticação e permissão, da seguinte maneira:
 
-No header da requisição:
-
+No HEADER da requisição:
+```
      KEY                        Value
 Content-Type                application/json     
 Authorization           Token <digite_o_token>
-
+```
 
 ### POST /api/courses/ - criando um curso:
 Permissão: Instrutor
