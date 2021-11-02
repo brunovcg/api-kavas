@@ -22,6 +22,10 @@ class ActivitiesView(APIView):
 
         data = request.data
 
+        unique_title = Activity.objects.filter(title=data['title'])
+        if len(unique_title) > 0:
+            return Response({'error': 'Activity with this name already exists'}, status=status.HTTP_400_BAD_REQUEST)
+
         activity = Activity.objects.get_or_create(**data)
 
         if activity[1] == True:
@@ -46,19 +50,25 @@ class OneActivityView(APIView):
     def put(self, request, activity_id=''):
         
         title = request.data['title']
-        points = request.data['points']       
+        points = request.data['points']
 
+        
+        
         try:
             activity = Activity.objects.get(id=activity_id)
 
         except ObjectDoesNotExist:
 
-            return Response({"errors": "invalid activity_id"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "invalid activity_id"}, status=status.HTTP_404_NOT_FOUND)
 
         serialized = ActivitySerializer(activity)
 
         if len(serialized.data['submissions']) > 0:
             return Response({'error': 'You can not change an Activity with submissions'}, status=status.HTTP_400_BAD_REQUEST)
+
+        unique_title = Activity.objects.filter(title=title)
+        if len(unique_title) > 0:
+            return Response({'error': 'Activity with this name already exists'}, status=status.HTTP_400_BAD_REQUEST)
     
         activity.title = title
         activity.points = points

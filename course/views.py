@@ -11,17 +11,13 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 
 
-
 class CourseView(APIView):  
 
-    # authentication_classes = [TokenAuthentication]
-    # permission_classes = [Instrutor, IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [Instrutor]
 
     def post(self, request):
        
-        CourseView.authentication_classes = [TokenAuthentication]
-        CourseView.permission_classes = [Instrutor, IsAuthenticated]
-
         name = request.data['name']
 
         add_course = Course.objects.get_or_create(name=name)
@@ -36,7 +32,7 @@ class CourseView(APIView):
         
 
     def get(self, request):
-
+     
         course = Course.objects.all()
         serialized = CourseSerializer(course, many=True)
 
@@ -44,21 +40,26 @@ class CourseView(APIView):
 
 
 class OneCourseView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [Instrutor]
+
+
     def put(self, request, course_id=''):
-        OneCourseView.authentication_classes = [TokenAuthentication]
-        OneCourseView.permission_classes = [IsAuthenticated, Instrutor]
         data = request.data
+
+        unique_name = Course.objects.filter(name=data['name'])
+
+        if len(unique_name) > 0:
+            return Response({'error': 'Course with this name already exists'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             course = Course.objects.get(id=course_id)
             course.name = data["name"]
             course.save()
         except ObjectDoesNotExist:
-            return Response({"error": "invalid course_id"}, status=status.HTTP_404_NOT_FOUND)
-
+            return Response({"error": "invalid course_id"}, status=status.HTTP_404_NOT_FOUND)       
 
         serialized = CourseSerializer(course)
-
 
         return Response(serialized.data, status=status.HTTP_200_OK)
 
@@ -69,13 +70,11 @@ class OneCourseView(APIView):
             course = Course.objects.get(id=course_id)
             serialized = CourseSerializer(course)
         except ObjectDoesNotExist:
-            return Response({"error": "invalid course_id"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"errors": "invalid course_id"}, status=status.HTTP_404_NOT_FOUND)
 
         return Response(serialized.data, status=status.HTTP_200_OK)
 
     def delete(self, request,course_id=''):
-        OneCourseView.authentication_classes = [TokenAuthentication]
-        OneCourseView.permission_classes = [IsAuthenticated, Instrutor]
 
         try:
             course = Course.objects.get(id=course_id)
@@ -84,7 +83,6 @@ class OneCourseView(APIView):
             return Response({"error": "invalid course_id"}, status=status.HTTP_404_NOT_FOUND)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 
 class CourseRegistrationsView(APIView):
@@ -111,15 +109,13 @@ class CourseRegistrationsView(APIView):
                 user = User.objects.get(id=user_id)
 
                 if user.is_staff or user.is_superuser:
-                    return Response({"errors": "Only students can be enrolled in the course."}, status=status.HTTP_404_NOT_FOUND)
+                    return Response({"errors": "Only students can be enrolled in the course."}, status=status.HTTP_400_BAD_REQUEST)
 
                 course.users.add(user)
 
             except ObjectDoesNotExist:
-                return Response({"errors": "invalid user_id list"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"errors": "invalid user_id list"}, status=status.HTTP_400_BAD_REQUEST)
           
         serialized = CourseSerializer(course)
 
         return Response(serialized.data, status=status.HTTP_200_OK)
-
-
