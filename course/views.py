@@ -56,6 +56,7 @@ class OneCourseView(APIView):
             course = Course.objects.get(id=course_id)
             course.name = data["name"]
             course.save()
+            
         except ObjectDoesNotExist:
             return Response({"error": "invalid course_id"}, status=status.HTTP_404_NOT_FOUND)       
 

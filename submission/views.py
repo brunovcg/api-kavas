@@ -44,3 +44,4 @@ class SubmissionView(APIView):
         serialized = SubmissionSerializer(submissions, many=True)
 
         return Response(serialized.data, status=status.HTTP_200_OK)        
+        

@@ -50,9 +50,7 @@ class OneActivityView(APIView):
     def put(self, request, activity_id=''):
         
         title = request.data['title']
-        points = request.data['points']
-
-        
+        points = request.data['points']       
         
         try:
             activity = Activity.objects.get(id=activity_id)
@@ -77,17 +75,6 @@ class OneActivityView(APIView):
         serialized = ActivitySerializer(activity)        
 
         return Response(serialized.data, status=status.HTTP_200_OK)
-
-        
-
-        
-                
-        
-
-        
-
-
-
        
 
 class ActivitySubmissionView(APIView):

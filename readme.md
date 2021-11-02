@@ -166,7 +166,6 @@ Se o nome do curso já existir
 {"error': 'Course with this name already exists"}
 ```
 
-
 ### PUT /api/courses/<int:course_id>/ - Atualizando o nome do curso
 
 Permissão: Instrutor
@@ -481,7 +480,6 @@ Permissão: Instrutor ou Facilitador
 {"error": "Activity with this name already exists"}
 
 ```
-
 
 ### POST /api/activities/<int:activity_id>/submissions/ - fazendo submissão de uma atividade
 
