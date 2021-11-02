@@ -106,8 +106,6 @@ class CourseRegistrationsView(APIView):
 
         course.users.set([])
         
-
-
         for user_id in users:
             try:
                 user = User.objects.get(id=user_id)

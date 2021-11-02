@@ -5,11 +5,11 @@ class Instrutor(BasePermission):
   
         return (request.user.is_staff == True and request.user.is_superuser == True)
 
-class Facilitador(BasePermission):
+class Facilitador_and_instrutor(BasePermission):
     def has_permission(self, request, view):
 
 
-        return (request.user.is_staff == True and request.user.is_superuser == False)
+        return (request.user.is_staff == True)
 
 class Estudante(BasePermission):
     def has_permission(self, request, view):

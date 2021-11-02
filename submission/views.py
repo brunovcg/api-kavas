@@ -3,13 +3,13 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from kanvas.permissions import Facilitador, Instrutor, Estudante
+from kanvas.permissions import Facilitador_and_instrutor, Instrutor, Estudante
 
 
 class OneSubmissionView(APIView):
 
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated, Instrutor, Facilitador]
+    permission_classes = [IsAuthenticated, Facilitador_and_instrutor]
 
     def put(self, request, submission_id=''):
         
@@ -17,7 +17,7 @@ class OneSubmissionView(APIView):
 
 class SubmissionView(APIView):
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated, Instrutor, Facilitador, Estudante]
+    permission_classes = [IsAuthenticated]
     
     def get(self, request):
         return Response({'msg': 'Listando submission'}, status=status.HTTP_200_OK)        
